@@ -83,7 +83,7 @@ export default function SignUpForm() {
     setAuthError(null);
     try {
       const result = await signUp.attemptEmailAddressVerification({
-        code: verficiationCode,
+        code: verificationCode,
       });
       // todo : console result
       if (result.status === 'complete') {
