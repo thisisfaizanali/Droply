@@ -121,7 +121,7 @@ export default function SignUpForm() {
         <CardBody className="py-6">
           {verificationError && (
             <div className="bg-danger-50 text-danger-700 p-4 rounded-lg mb-6 flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 flex-shrink-0" />
+              <AlertCircle className="h-5 w-5 shrink-0" />
               <p>{verificationError}</p>
             </div>
           )}
@@ -193,7 +193,7 @@ export default function SignUpForm() {
       <CardBody className="py-6">
         {authError && (
           <div className="bg-danger-50 text-danger-700 p-4 rounded-lg mb-6 flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 flex-shrink-0" />
+            <AlertCircle className="h-5 w-5 shrink-0" />
             <p>{authError}</p>
           </div>
         )}
