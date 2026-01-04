@@ -94,7 +94,7 @@ export default function SignUpForm() {
         setVerificationError('Verification could not be completed');
       }
     } catch (error: any) {
-      console.error('Verification incomplete', result);
+      console.error('Verification incomplete', error);
       setVerificationError(
         error.errors?.[0]?.message ||
           'An error has occurred during the signup. Please try again'
