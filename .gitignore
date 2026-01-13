@@ -45,3 +45,5 @@ next-env.d.ts
 
 # My learnings in a nutshell :
 learning.md
+# clerk configuration (can include secrets)
+/.clerk/

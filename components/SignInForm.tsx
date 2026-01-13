@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { signInSchema } from '@/schemas/signInSchema';
-import { useSignIn } from '@clerk/nextjs';
-import { Button } from '@heroui/button';
-import { Card, CardBody, CardFooter, CardHeader } from '@heroui/card';
-import { Divider } from '@heroui/divider';
-import { Input } from '@heroui/input';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertCircle, Eye, EyeOff, Lock, Mail } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useSignIn } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { z } from "zod";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { Card, CardBody, CardHeader, CardFooter } from "@heroui/card";
+import { Divider } from "@heroui/divider";
+import { Mail, Lock, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { signInSchema } from "@/schemas/signInSchema";
 
 export default function SignInForm() {
   const router = useRouter();
@@ -28,8 +28,8 @@ export default function SignInForm() {
   } = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-      identifier: '',
-      password: '',
+      identifier: "",
+      password: "",
     },
   });
 
@@ -45,18 +45,18 @@ export default function SignInForm() {
         password: data.password,
       });
 
-      if (result.status === 'complete') {
+      if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push('/dashboard');
+        router.push("/dashboard");
       } else {
-        console.error('Sign-in incomplete:', result);
-        setAuthError('Sign-in could not be completed. Please try again.');
+        console.error("Sign-in incomplete:", result);
+        setAuthError("Sign-in could not be completed. Please try again.");
       }
     } catch (error: any) {
-      console.error('Sign-in error:', error);
+      console.error("Sign-in error:", error);
       setAuthError(
         error.errors?.[0]?.message ||
-          'An error occurred during sign-in. Please try again.'
+          "An error occurred during sign-in. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -77,7 +77,7 @@ export default function SignInForm() {
       <CardBody className="py-6">
         {authError && (
           <div className="bg-danger-50 text-danger-700 p-4 rounded-lg mb-6 flex items-center gap-2">
-            <AlertCircle className="h-5 w-5  shrink-0" />
+            <AlertCircle className="h-5 w-5 flex-shrink-0" />
             <p>{authError}</p>
           </div>
         )}
@@ -97,7 +97,7 @@ export default function SignInForm() {
               startContent={<Mail className="h-4 w-4 text-default-500" />}
               isInvalid={!!errors.identifier}
               errorMessage={errors.identifier?.message}
-              {...register('identifier')}
+              {...register("identifier")}
               className="w-full"
             />
           </div>
@@ -113,7 +113,7 @@ export default function SignInForm() {
             </div>
             <Input
               id="password"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               startContent={<Lock className="h-4 w-4 text-default-500" />}
               endContent={
@@ -133,7 +133,7 @@ export default function SignInForm() {
               }
               isInvalid={!!errors.password}
               errorMessage={errors.password?.message}
-              {...register('password')}
+              {...register("password")}
               className="w-full"
             />
           </div>
@@ -144,7 +144,7 @@ export default function SignInForm() {
             className="w-full"
             isLoading={isSubmitting}
           >
-            {isSubmitting ? 'Signing in...' : 'Sign In'}
+            {isSubmitting ? "Signing in..." : "Sign In"}
           </Button>
         </form>
       </CardBody>
@@ -153,7 +153,7 @@ export default function SignInForm() {
 
       <CardFooter className="flex justify-center py-4">
         <p className="text-sm text-default-600">
-          Do not have an account?{' '}
+          Don't have an account?{" "}
           <Link
             href="/sign-up"
             className="text-primary hover:underline font-medium"

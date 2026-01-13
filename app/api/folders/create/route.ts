@@ -1,15 +1,15 @@
-import { db } from '@/lib/db';
-import { files } from '@/lib/db/schema';
-import { auth } from '@clerk/nextjs/server';
-import { and, eq } from 'drizzle-orm';
-import { NextRequest, NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import { db } from "@/lib/db";
+import { files } from "@/lib/db/schema";
+import { v4 as uuidv4 } from "uuid";
+import { eq, and } from "drizzle-orm";
 
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -17,12 +17,12 @@ export async function POST(request: NextRequest) {
 
     // Verify the user is creating a folder in their own account
     if (bodyUserId !== userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (!name || typeof name !== 'string' || name.trim() === '') {
+    if (!name || typeof name !== "string" || name.trim() === "") {
       return NextResponse.json(
-        { error: 'Folder name is required' },
+        { error: "Folder name is required" },
         { status: 400 }
       );
     }
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 
       if (!parentFolder) {
         return NextResponse.json(
-          { error: 'Parent folder not found' },
+          { error: "Parent folder not found" },
           { status: 404 }
         );
       }
@@ -54,8 +54,8 @@ export async function POST(request: NextRequest) {
       name: name.trim(),
       path: `/folders/${userId}/${uuidv4()}`,
       size: 0,
-      type: 'folder',
-      fileUrl: '',
+      type: "folder",
+      fileUrl: "",
       thumbnailUrl: null,
       userId,
       parentId,
@@ -68,13 +68,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Folder created successfully',
+      message: "Folder created successfully",
       folder: newFolder,
     });
   } catch (error) {
-    console.error('Error creating folder:', error);
+    console.error("Error creating folder:", error);
     return NextResponse.json(
-      { error: 'Failed to create folder' },
+      { error: "Failed to create folder" },
       { status: 500 }
     );
   }

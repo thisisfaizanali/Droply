@@ -1,36 +1,33 @@
-'use client';
+"use client";
 
-import { useSignUp } from '@clerk/nextjs';
-import { Button } from '@heroui/button';
-import { CardFooter, CardHeader } from '@heroui/card';
-import { Divider } from '@heroui/divider';
-import { Input } from '@heroui/input';
-import { Card, CardBody } from '@heroui/react';
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useSignUp } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { z } from "zod";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { Card, CardBody, CardHeader, CardFooter } from "@heroui/card";
+import { Divider } from "@heroui/divider";
 import {
+  Mail,
+  Lock,
   AlertCircle,
   CheckCircle,
   Eye,
   EyeOff,
-  Lock,
-  Mail,
-} from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-// zod custom schema :
-import { signUpSchema } from '@/schemas/signUpSchema';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from "lucide-react";
+import { signUpSchema } from "@/schemas/signUpSchema";
 
 export default function SignUpForm() {
   const router = useRouter();
   const { signUp, isLoaded, setActive } = useSignUp();
-  const [verifying, setVerifying] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [verificationCode, setVerificationCode] = useState('');
   const [authError, setAuthError] = useState<string | null>(null);
+  const [verifying, setVerifying] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
   const [verificationError, setVerificationError] = useState<string | null>(
     null
   );
@@ -44,30 +41,31 @@ export default function SignUpForm() {
   } = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      email: '',
-      password: '',
-      passwordConfirmation: '',
+      email: "",
+      password: "",
+      passwordConfirmation: "",
     },
   });
 
   const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
     if (!isLoaded) return;
+
     setIsSubmitting(true);
     setAuthError(null);
+
     try {
       await signUp.create({
         emailAddress: data.email,
         password: data.password,
       });
-      await signUp.prepareEmailAddressVerification({
-        strategy: 'email_code',
-      });
+
+      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setVerifying(true);
     } catch (error: any) {
-      console.error('Signup error :', error);
+      console.error("Sign-up error:", error);
       setAuthError(
         error.errors?.[0]?.message ||
-          'An error has occurred during signup. Please try again'
+          "An error occurred during sign-up. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -79,25 +77,29 @@ export default function SignUpForm() {
   ) => {
     e.preventDefault();
     if (!isLoaded || !signUp) return;
+
     setIsSubmitting(true);
-    setAuthError(null);
+    setVerificationError(null);
+
     try {
       const result = await signUp.attemptEmailAddressVerification({
         code: verificationCode,
       });
-      // todo : console result
-      if (result.status === 'complete') {
+
+      if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push('/dashboard');
+        router.push("/dashboard");
       } else {
-        console.error('Verification incomplete', result);
-        setVerificationError('Verification could not be completed');
+        console.error("Verification incomplete:", result);
+        setVerificationError(
+          "Verification could not be completed. Please try again."
+        );
       }
     } catch (error: any) {
-      console.error('Verification incomplete', error);
+      console.error("Verification error:", error);
       setVerificationError(
         error.errors?.[0]?.message ||
-          'An error has occurred during the signup. Please try again'
+          "An error occurred during verification. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -112,7 +114,7 @@ export default function SignUpForm() {
             Verify Your Email
           </h1>
           <p className="text-default-500 text-center">
-            We have sent a verification code to your email
+            We've sent a verification code to your email
           </p>
         </CardHeader>
 
@@ -121,7 +123,7 @@ export default function SignUpForm() {
         <CardBody className="py-6">
           {verificationError && (
             <div className="bg-danger-50 text-danger-700 p-4 rounded-lg mb-6 flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 shrink-0" />
+              <AlertCircle className="h-5 w-5 flex-shrink-0" />
               <p>{verificationError}</p>
             </div>
           )}
@@ -151,18 +153,18 @@ export default function SignUpForm() {
               className="w-full"
               isLoading={isSubmitting}
             >
-              {isSubmitting ? 'Verifying...' : 'Verify Email'}
+              {isSubmitting ? "Verifying..." : "Verify Email"}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-default-500">
-              Did not receive a code?{' '}
+              Didn't receive a code?{" "}
               <button
                 onClick={async () => {
                   if (signUp) {
                     await signUp.prepareEmailAddressVerification({
-                      strategy: 'email_code',
+                      strategy: "email_code",
                     });
                   }
                 }}
@@ -193,7 +195,7 @@ export default function SignUpForm() {
       <CardBody className="py-6">
         {authError && (
           <div className="bg-danger-50 text-danger-700 p-4 rounded-lg mb-6 flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 shrink-0" />
+            <AlertCircle className="h-5 w-5 flex-shrink-0" />
             <p>{authError}</p>
           </div>
         )}
@@ -213,7 +215,7 @@ export default function SignUpForm() {
               startContent={<Mail className="h-4 w-4 text-default-500" />}
               isInvalid={!!errors.email}
               errorMessage={errors.email?.message}
-              {...register('email')}
+              {...register("email")}
               className="w-full"
             />
           </div>
@@ -227,7 +229,7 @@ export default function SignUpForm() {
             </label>
             <Input
               id="password"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               startContent={<Lock className="h-4 w-4 text-default-500" />}
               endContent={
@@ -247,7 +249,7 @@ export default function SignUpForm() {
               }
               isInvalid={!!errors.password}
               errorMessage={errors.password?.message}
-              {...register('password')}
+              {...register("password")}
               className="w-full"
             />
           </div>
@@ -261,7 +263,7 @@ export default function SignUpForm() {
             </label>
             <Input
               id="passwordConfirmation"
-              type={showConfirmPassword ? 'text' : 'password'}
+              type={showConfirmPassword ? "text" : "password"}
               placeholder="••••••••"
               startContent={<Lock className="h-4 w-4 text-default-500" />}
               endContent={
@@ -281,7 +283,7 @@ export default function SignUpForm() {
               }
               isInvalid={!!errors.passwordConfirmation}
               errorMessage={errors.passwordConfirmation?.message}
-              {...register('passwordConfirmation')}
+              {...register("passwordConfirmation")}
               className="w-full"
             />
           </div>
@@ -302,7 +304,7 @@ export default function SignUpForm() {
             className="w-full"
             isLoading={isSubmitting}
           >
-            {isSubmitting ? 'Creating account...' : 'Create Account'}
+            {isSubmitting ? "Creating account..." : "Create Account"}
           </Button>
         </form>
       </CardBody>
@@ -311,7 +313,7 @@ export default function SignUpForm() {
 
       <CardFooter className="flex justify-center py-4">
         <p className="text-sm text-default-600">
-          Already have an account?{' '}
+          Already have an account?{" "}
           <Link
             href="/sign-in"
             className="text-primary hover:underline font-medium"
