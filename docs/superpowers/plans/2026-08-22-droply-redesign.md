@@ -28,7 +28,7 @@
 
 **New files:**
 - `components.json` — shadcn config
-- `components/ui/{button,card,dialog,dropdown-menu,table,avatar,input,label,separator,tooltip,progress}.tsx` — shadcn-generated primitives
+- `components/ui/{button,card,dialog,dropdown-menu,table,avatar,input,label,progress}.tsx` — shadcn-generated primitives
 - `components/AuthSplitPanel.tsx` — shared decorative left panel for both auth pages
 - `components/AuthToggle.tsx` — shared sign-in/sign-up link toggle
 - `components/DashboardSidebar.tsx` — sidebar nav (All Files/Starred/Trash/Profile + storage meter), presentational
@@ -426,20 +426,20 @@ git commit -m "chore: replace HeroUI with shadcn/ui foundation and Organic desig
 ## Task 2: Add shadcn UI primitives
 
 **Files:**
-- Create: `components/ui/button.tsx`, `components/ui/card.tsx`, `components/ui/dialog.tsx`, `components/ui/dropdown-menu.tsx`, `components/ui/table.tsx`, `components/ui/avatar.tsx`, `components/ui/input.tsx`, `components/ui/label.tsx`, `components/ui/separator.tsx`, `components/ui/tooltip.tsx`, `components/ui/progress.tsx`
+- Create: `components/ui/button.tsx`, `components/ui/card.tsx`, `components/ui/dialog.tsx`, `components/ui/dropdown-menu.tsx`, `components/ui/table.tsx`, `components/ui/avatar.tsx`, `components/ui/input.tsx`, `components/ui/label.tsx`, `components/ui/progress.tsx`
 
 **Interfaces:**
-- Produces: `Button` (variants `default|outline|ghost|link|destructive`, sizes `default|sm|lg|icon`), `Card`/`CardHeader`/`CardContent`/`CardFooter`, `Dialog`/`DialogContent`/`DialogHeader`/`DialogFooter`/`DialogTitle`, `DropdownMenu`/`DropdownMenuTrigger`/`DropdownMenuContent`/`DropdownMenuItem`, `Table`/`TableHeader`/`TableBody`/`TableRow`/`TableCell`/`TableHead`, `Avatar`/`AvatarImage`/`AvatarFallback`, `Input`, `Label`, `Separator`, `Tooltip`/`TooltipTrigger`/`TooltipContent`/`TooltipProvider`, `Progress` — all imported from `@/components/ui/<name>`, all consumed starting Task 3.
+- Produces: `Button` (variants `default|outline|ghost|link|destructive`, sizes `default|sm|lg|icon`), `Card`/`CardHeader`/`CardContent`/`CardFooter`, `Dialog`/`DialogContent`/`DialogHeader`/`DialogFooter`/`DialogTitle`, `DropdownMenu`/`DropdownMenuTrigger`/`DropdownMenuContent`/`DropdownMenuItem`, `Table`/`TableHeader`/`TableBody`/`TableRow`/`TableCell`/`TableHead`, `Avatar`/`AvatarImage`/`AvatarFallback`, `Input`, `Label`, `Progress` — all imported from `@/components/ui/<name>`, all consumed starting Task 3. (`separator` and `tooltip` are deliberately not generated — no task in this plan ends up needing them; `UserProfile.tsx` uses a plain `<div>` divider and no file uses a tooltip. Add them later with the same CLI command if a future task needs them.)
 
 - [ ] **Step 1: Generate the primitives**
 
-Run: `npx shadcn@latest add button card dialog dropdown-menu table avatar input label separator tooltip progress -y`
-Expected: creates the 11 files listed above under `components/ui/`, and adds their Radix peer packages (`@radix-ui/react-dialog`, `@radix-ui/react-dropdown-menu`, `@radix-ui/react-avatar`, `@radix-ui/react-label`, `@radix-ui/react-separator`, `@radix-ui/react-tooltip`, `@radix-ui/react-progress`) to `package.json`/`package-lock.json` automatically.
+Run: `npx shadcn@latest add button card dialog dropdown-menu table avatar input label progress -y`
+Expected: creates the 9 files listed above under `components/ui/`, and adds their Radix peer packages (`@radix-ui/react-dialog`, `@radix-ui/react-dropdown-menu`, `@radix-ui/react-avatar`, `@radix-ui/react-label`, `@radix-ui/react-progress`) to `package.json`/`package-lock.json` automatically.
 
 - [ ] **Step 2: Verify the files exist and nothing else broke**
 
 Run: `ls components/ui`
-Expected: the 11 new files, plus the pre-existing `Badge.tsx` and `ConfirmationModal.tsx`.
+Expected: the 9 new files, plus the pre-existing `Badge.tsx` and `ConfirmationModal.tsx`.
 
 Run: `npx tsc --noEmit 2>&1 | grep -v "@heroui"`
 Expected: no output (the new files aren't consumed by anything yet, so they can't introduce new errors; if this prints anything, one of the generated files failed to type-check on its own — investigate before moving on).
