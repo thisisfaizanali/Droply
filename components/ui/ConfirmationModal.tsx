@@ -1,12 +1,12 @@
 import React from "react";
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
-import { Button } from "@heroui/button";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { LucideIcon } from "lucide-react";
 
 interface ConfirmationModalProps {
@@ -30,69 +30,52 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   title,
   description,
   icon: Icon,
-  iconColor = "text-danger",
+  iconColor = "text-organic-accent-700",
   confirmText = "Confirm",
   cancelText = "Cancel",
-  confirmColor = "danger",
   onConfirm,
   isDangerous = false,
   warningMessage,
 }) => {
   return (
-    <Modal
-      isOpen={isOpen}
-      onOpenChange={onOpenChange}
-      backdrop="blur"
-      classNames={{
-        base: "border border-default-200 bg-default-50",
-        header: "border-b border-default-200",
-        footer: "border-t border-default-200",
-      }}
-    >
-      <ModalContent>
-        <ModalHeader className="flex gap-2 items-center">
-          {Icon && <Icon className={`h-5 w-5 ${iconColor}`} />}
-          <span>{title}</span>
-        </ModalHeader>
-        <ModalBody>
-          {isDangerous && warningMessage && (
-            <div className="bg-danger-50 text-danger-700 p-4 rounded-lg mb-4">
-              <div className="flex items-start gap-3">
-                {Icon && (
-                  <Icon
-                    className={`h-5 w-5 mt-0.5 flex-shrink-0 ${iconColor}`}
-                  />
-                )}
-                <div>
-                  <p className="font-medium">This action cannot be undone</p>
-                  <p className="text-sm mt-1">{warningMessage}</p>
-                </div>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="rounded-[32px] bg-card">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            {Icon && <Icon className={`h-5 w-5 ${iconColor}`} />}
+            {title}
+          </DialogTitle>
+        </DialogHeader>
+
+        {isDangerous && warningMessage && (
+          <div className="rounded-lg bg-organic-accent-100 p-4 text-organic-accent-800">
+            <div className="flex items-start gap-3">
+              {Icon && <Icon className={`mt-0.5 h-5 w-5 flex-shrink-0 ${iconColor}`} />}
+              <div>
+                <p className="font-medium">This action cannot be undone</p>
+                <p className="mt-1 text-sm">{warningMessage}</p>
               </div>
             </div>
-          )}
-          <p>{description}</p>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            variant="flat"
-            color="default"
-            onClick={() => onOpenChange(false)}
-          >
+          </div>
+        )}
+        <p>{description}</p>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
             {cancelText}
           </Button>
           <Button
-            color={confirmColor}
             onClick={() => {
               onConfirm();
               onOpenChange(false);
             }}
-            startContent={Icon && <Icon className="h-4 w-4" />}
           >
+            {Icon && <Icon className="mr-1 h-4 w-4" />}
             {confirmText}
           </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 
