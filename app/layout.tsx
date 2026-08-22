@@ -6,7 +6,7 @@ import { fontHeading, fontBody } from '@/config/fonts';
 
 export const metadata: Metadata = {
   title: 'Droply',
-  description: 'Secure cloud storage for your images, powered by ImageKit',
+  description: 'Secure cloud storage for your photos and PDFs, powered by ImageKit',
 };
 
 export default function RootLayout({

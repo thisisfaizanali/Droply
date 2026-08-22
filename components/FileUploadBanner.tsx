@@ -131,7 +131,7 @@ export default function FileUploadBanner({
             {uploading ? `Uploading... ${progress}%` : "Drag and drop to upload"}
           </div>
           <div className="text-sm text-muted-foreground">
-            Images up to 5MB, kept private to you
+            Images and PDFs up to 5MB, kept private to you
           </div>
         </div>
         <Button variant="outline" onClick={() => setFolderModalOpen(true)}>
@@ -146,7 +146,7 @@ export default function FileUploadBanner({
           ref={fileInputRef}
           type="file"
           className="hidden"
-          accept="image/*"
+          accept="image/*,application/pdf"
           onChange={handleFileChange}
         />
       </div>

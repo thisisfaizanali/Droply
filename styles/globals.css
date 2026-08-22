@@ -85,3 +85,18 @@ body {
   h2 { @apply text-2xl; }
   h3 { @apply text-xl; }
 }
+
+@keyframes drift {
+  0%, 100% { transform: translateY(0) rotate(var(--drift-rotate, 0deg)); }
+  50% { transform: translateY(-10px) rotate(var(--drift-rotate, 0deg)); }
+}
+
+.animate-drift {
+  animation: drift 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-drift {
+    animation: none;
+  }
+}

@@ -21,6 +21,9 @@ export default function SignInForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [needsSecondFactor, setNeedsSecondFactor] = useState(false);
+  const [secondFactorCode, setSecondFactorCode] = useState("");
+  const [secondFactorError, setSecondFactorError] = useState<string | null>(null);
 
   const {
     register,
@@ -46,6 +49,9 @@ export default function SignInForm() {
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
         router.push("/dashboard");
+      } else if (result.status === "needs_second_factor") {
+        await signIn.prepareSecondFactor({ strategy: "email_code" });
+        setNeedsSecondFactor(true);
       } else {
         console.error("Sign-in incomplete:", result);
         setAuthError("Sign-in could not be completed. Please try again.");
@@ -60,6 +66,91 @@ export default function SignInForm() {
       setIsSubmitting(false);
     }
   };
+
+  const handleSecondFactorSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!isLoaded) return;
+
+    setIsSubmitting(true);
+    setSecondFactorError(null);
+
+    try {
+      const result = await signIn.attemptSecondFactor({
+        strategy: "email_code",
+        code: secondFactorCode,
+      });
+
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        router.push("/dashboard");
+      } else {
+        console.error("Second factor incomplete:", result);
+        setSecondFactorError("Verification could not be completed. Please try again.");
+      }
+    } catch (error: any) {
+      console.error("Second factor error:", error);
+      setSecondFactorError(
+        error.errors?.[0]?.message ||
+          "An error occurred during verification. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (needsSecondFactor) {
+    return (
+      <Card className="border-none shadow-organic-md">
+        <CardContent className="p-9">
+          <h3>Enter verification code</h3>
+          <p className="mb-5 text-muted-foreground">
+            We've sent a verification code to your email
+          </p>
+
+          {secondFactorError && (
+            <div className="mb-5 flex items-center gap-2 rounded-lg bg-organic-accent-100 p-4 text-organic-accent-800">
+              <AlertCircle className="h-5 w-5 flex-shrink-0" />
+              <p>{secondFactorError}</p>
+            </div>
+          )}
+
+          <form onSubmit={handleSecondFactorSubmit} className="flex flex-col gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="secondFactorCode">Verification code</Label>
+              <Input
+                id="secondFactorCode"
+                type="text"
+                placeholder="Enter the 6-digit code"
+                value={secondFactorCode}
+                onChange={(e) => setSecondFactorCode(e.target.value)}
+                autoFocus
+              />
+            </div>
+
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Verifying..." : "Verify"}
+            </Button>
+          </form>
+
+          <div className="mt-5 text-center">
+            <p className="text-sm text-muted-foreground">
+              Didn't receive a code?{" "}
+              <button
+                onClick={async () => {
+                  if (signIn) {
+                    await signIn.prepareSecondFactor({ strategy: "email_code" });
+                  }
+                }}
+                className="font-medium text-primary hover:underline"
+              >
+                Resend code
+              </button>
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="border-none shadow-organic-md">
