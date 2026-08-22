@@ -1,14 +1,12 @@
 "use client";
 
 import { useUser, useClerk } from "@clerk/nextjs";
-import { Button } from "@heroui/button";
-import { Card, CardBody, CardHeader, CardFooter } from "@heroui/card";
-import { Spinner } from "@heroui/spinner";
-import { Avatar } from "@heroui/avatar";
-import { Divider } from "@heroui/divider";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Badge from "@/components/ui/Badge";
 import { useRouter } from "next/navigation";
-import { Mail, User, LogOut, Shield, ArrowRight } from "lucide-react";
+import { Loader2, Mail, User, ArrowRight } from "lucide-react";
 
 export default function UserProfile() {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -17,40 +15,29 @@ export default function UserProfile() {
 
   if (!isLoaded) {
     return (
-      <div className="flex flex-col justify-center items-center p-12">
-        <Spinner size="lg" color="primary" />
-        <p className="mt-4 text-default-600">Loading your profile...</p>
+      <div className="flex flex-col items-center justify-center p-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="mt-4 text-muted-foreground">Loading your profile...</p>
       </div>
     );
   }
 
   if (!isSignedIn) {
     return (
-      <Card className="max-w-md mx-auto border border-default-200 bg-default-50 shadow-sm hover:shadow-md transition-shadow">
-        <CardHeader className="flex gap-3">
-          <User className="h-6 w-6 text-primary" />
-          <h2 className="text-xl font-semibold">User Profile</h2>
-        </CardHeader>
-        <Divider />
-        <CardBody className="text-center py-10">
-          <div className="mb-6">
-            <Avatar name="Guest" size="lg" className="mx-auto mb-4" />
-            <p className="text-lg font-medium">Not Signed In</p>
-            <p className="text-default-500 mt-2">
-              Please sign in to access your profile
-            </p>
-          </div>
-          <Button
-            variant="solid"
-            color="primary"
-            size="lg"
-            onClick={() => router.push("/sign-in")}
-            className="px-8"
-            endContent={<ArrowRight className="h-4 w-4" />}
-          >
-            Sign In
+      <Card className="mx-auto max-w-md border-none shadow-organic-sm">
+        <CardContent className="py-10 text-center">
+          <Avatar className="mx-auto mb-4 h-16 w-16">
+            <AvatarFallback>
+              <User className="h-6 w-6" />
+            </AvatarFallback>
+          </Avatar>
+          <p className="text-lg font-medium">Not signed in</p>
+          <p className="mt-2 text-muted-foreground">Please sign in to access your profile</p>
+          <Button className="mt-6" onClick={() => router.push("/sign-in")}>
+            Sign in
+            <ArrowRight className="ml-1 h-4 w-4" />
           </Button>
-        </CardBody>
+        </CardContent>
       </Card>
     );
   }
@@ -62,110 +49,49 @@ export default function UserProfile() {
     .map((name) => name[0])
     .join("")
     .toUpperCase();
-
-  const userRole = user.publicMetadata.role as string | undefined;
+  const isVerified = user.emailAddresses?.[0]?.verification?.status === "verified";
 
   const handleSignOut = () => {
-    signOut(() => {
-      router.push("/");
-    });
+    signOut(() => router.push("/"));
   };
 
   return (
-    <Card className="max-w-md mx-auto border border-default-200 bg-default-50 shadow-sm hover:shadow-md transition-shadow">
-      <CardHeader className="flex gap-3">
-        <User className="h-6 w-6 text-primary" />
-        <h2 className="text-xl font-semibold">User Profile</h2>
-      </CardHeader>
-      <Divider />
-      <CardBody className="py-6">
-        <div className="flex flex-col items-center text-center mb-6">
-          {user.imageUrl ? (
-            <Avatar
-              src={user.imageUrl}
-              alt={fullName}
-              size="lg"
-              className="mb-4 h-24 w-24"
-            />
-          ) : (
-            <Avatar
-              name={initials}
-              size="lg"
-              className="mb-4 h-24 w-24 text-lg"
-            />
-          )}
-          <h3 className="text-xl font-semibold">{fullName}</h3>
-          {user.emailAddresses && user.emailAddresses.length > 0 && (
-            <div className="flex items-center gap-2 mt-1 text-default-500">
-              <Mail className="h-4 w-4" />
-              <span>{email}</span>
-            </div>
-          )}
-          {userRole && (
-            <Badge
-              color="primary"
-              variant="flat"
-              className="mt-3"
-              aria-label={`User role: ${userRole}`}
-            >
-              {userRole}
-            </Badge>
-          )}
-        </div>
-
-        <Divider className="my-4" />
-
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-primary/70" />
-              <span className="font-medium">Account Status</span>
-            </div>
-            <Badge
-              color="success"
-              variant="flat"
-              aria-label="Account status: Active"
-            >
-              Active
-            </Badge>
+    <div className="max-w-md">
+      <h1 className="mb-4 text-3xl">Profile</h1>
+      <Card className="border-none shadow-organic-sm">
+        <CardContent className="flex flex-col items-center gap-4 py-7 text-center">
+          <Avatar className="h-20 w-20 text-2xl">
+            <AvatarImage src={user.imageUrl} alt={fullName} />
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+          <div>
+            <h3>{fullName}</h3>
+            {email && (
+              <div className="mt-1 flex items-center justify-center gap-2 text-muted-foreground">
+                <Mail className="h-4 w-4" />
+                <span>{email}</span>
+              </div>
+            )}
           </div>
 
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <Mail className="h-5 w-5 text-primary/70" />
-              <span className="font-medium">Email Verification</span>
-            </div>
-            <Badge
-              color={
-                user.emailAddresses?.[0]?.verification?.status === "verified"
-                  ? "success"
-                  : "warning"
-              }
-              variant="flat"
-              aria-label={`Email verification status: ${
-                user.emailAddresses?.[0]?.verification?.status === "verified"
-                  ? "Verified"
-                  : "Pending"
-              }`}
-            >
-              {user.emailAddresses?.[0]?.verification?.status === "verified"
-                ? "Verified"
-                : "Pending"}
-            </Badge>
+          <div className="my-1 h-px w-full bg-border" />
+
+          <div className="flex w-full justify-between">
+            <span className="text-sm font-semibold">Account status</span>
+            <Badge color="secondary" variant="flat">Active</Badge>
           </div>
-        </div>
-      </CardBody>
-      <Divider />
-      <CardFooter className="flex justify-between">
-        <Button
-          variant="flat"
-          color="danger"
-          startContent={<LogOut className="h-4 w-4" />}
-          onClick={handleSignOut}
-        >
-          Sign Out
-        </Button>
-      </CardFooter>
-    </Card>
+          <div className="flex w-full justify-between">
+            <span className="text-sm font-semibold">Email verification</span>
+            <Badge color="secondary" variant="flat">{isVerified ? "Verified" : "Pending"}</Badge>
+          </div>
+
+          <div className="my-1 h-px w-full bg-border" />
+
+          <Button variant="outline" onClick={handleSignOut}>
+            Sign out
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
