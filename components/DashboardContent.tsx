@@ -172,8 +172,10 @@ export default function DashboardContent({ userId, userName }: DashboardContentP
       </button>
 
       {mobileSidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-organic-neutral-900 opacity-20 md:hidden"
+        <button
+          type="button"
+          aria-label="Close menu"
+          className="fixed inset-0 z-40 cursor-default bg-organic-neutral-900 opacity-20 md:hidden"
           onClick={() => setMobileSidebarOpen(false)}
         />
       )}

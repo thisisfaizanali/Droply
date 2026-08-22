@@ -33,10 +33,18 @@ export default function FileGrid({
       {files.map((file) => (
         <div
           key={file.id}
+          role="button"
+          tabIndex={0}
           className={`overflow-hidden rounded-[24px] bg-card shadow-organic-sm transition-transform hover:-translate-y-0.5 ${
             file.isFolder || file.type.startsWith("image/") ? "cursor-pointer" : ""
           }`}
           onClick={() => onOpen(file)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onOpen(file);
+            }
+          }}
         >
           <div className={`flex h-[100px] items-center justify-center ${fileTileBg(file)}`}>
             <FileIcon file={file} variant="tile" />
@@ -52,6 +60,7 @@ export default function FileGrid({
               {file.isFolder ? "—" : formatSize(file.size)} ·{" "}
               {new Date(file.createdAt).toLocaleDateString()}
             </div>
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- not itself interactive, just stops clicks on the real buttons inside from bubbling to the card's onOpen */}
             <div className="mt-2.5" onClick={(e) => e.stopPropagation()}>
               <FileActions
                 file={file}

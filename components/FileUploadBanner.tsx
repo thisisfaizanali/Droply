@@ -166,6 +166,7 @@ export default function FileUploadBanner({
               placeholder="My Images"
               value={folderName}
               onChange={(e) => setFolderName(e.target.value)}
+              // eslint-disable-next-line jsx-a11y/no-autofocus -- dialog just opened, focusing its only field
               autoFocus
             />
           </div>

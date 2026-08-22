@@ -90,7 +90,7 @@ export default function SignUpForm() {
         <CardContent className="p-9">
           <h3>Verify your email</h3>
           <p className="mb-5 text-muted-foreground">
-            We've sent a verification code to your email
+            We&apos;ve sent a verification code to your email
           </p>
 
           {verificationError && (
@@ -109,6 +109,7 @@ export default function SignUpForm() {
                 placeholder="Enter the 6-digit code"
                 value={verificationCode}
                 onChange={(e) => setVerificationCode(e.target.value)}
+                // eslint-disable-next-line jsx-a11y/no-autofocus -- verification step just replaced the form, focusing its only field
                 autoFocus
               />
             </div>
@@ -120,7 +121,7 @@ export default function SignUpForm() {
 
           <div className="mt-5 text-center">
             <p className="text-sm text-muted-foreground">
-              Didn't receive a code?{" "}
+              Didn&apos;t receive a code?{" "}
               <button
                 onClick={async () => {
                   if (signUp) {

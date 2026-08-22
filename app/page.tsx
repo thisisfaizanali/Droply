@@ -137,7 +137,7 @@ export default function Home() {
         </section>
 
         <section className="mx-auto max-w-[1180px] px-6 py-14">
-          <h2 className="max-w-md">Everything your files need, nothing they don't</h2>
+          <h2 className="max-w-md">Everything your files need, nothing they don&apos;t</h2>
           <div className="mt-9 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
             <Card className="border-none shadow-organic-sm transition-transform duration-200 hover:-translate-y-1 hover:shadow-organic-md">
               <CardContent className="p-7">
@@ -193,7 +193,7 @@ export default function Home() {
             <SignedOut>
               <Link href="/sign-up" className="relative">
                 <Button size="lg" className="transition-transform hover:scale-[1.03]">
-                  Let's go
+                  Let&apos;s go
                 </Button>
               </Link>
             </SignedOut>
