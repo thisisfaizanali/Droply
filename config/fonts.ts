@@ -1,11 +1,13 @@
-import { Fira_Code as FontMono, Inter as FontSans } from "next/font/google";
+import { Caprasimo, Figtree } from "next/font/google";
 
-export const fontSans = FontSans({
+export const fontHeading = Caprasimo({
   subsets: ["latin"],
-  variable: "--font-sans",
+  weight: "400",
+  variable: "--font-heading",
 });
 
-export const fontMono = FontMono({
+export const fontBody = Figtree({
   subsets: ["latin"],
-  variable: "--font-mono",
+  weight: ["400", "600", "700"],
+  variable: "--font-body",
 });

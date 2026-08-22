@@ -1,13 +1,8 @@
 import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import '../styles/globals.css';
 import { Providers } from './providers';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-});
+import { fontHeading, fontBody } from '@/config/fonts';
 
 export const metadata: Metadata = {
   title: 'Droply',
@@ -21,9 +16,9 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className="dark">
+      <html lang="en">
         <body
-          className={`${inter.variable} antialiased bg-background text-foreground`}
+          className={`${fontHeading.variable} ${fontBody.variable} antialiased bg-background text-foreground`}
         >
           <Providers>{children}</Providers>
         </body>

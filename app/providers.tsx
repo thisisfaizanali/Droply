@@ -1,28 +1,14 @@
 'use client';
 
-import { HeroUIProvider } from '@heroui/system';
-import { ToastProvider } from '@heroui/toast';
 import { ImageKitProvider } from 'imagekitio-next';
-import type { ThemeProviderProps } from 'next-themes';
-import { ThemeProvider as NextThemesProvider } from 'next-themes';
-import { useRouter } from 'next/navigation';
+import { Toaster } from 'sonner';
 import * as React from 'react';
 import { createContext, useContext } from 'react';
 
 export interface ProvidersProps {
   children: React.ReactNode;
-  themeProps?: ThemeProviderProps;
 }
 
-declare module '@react-types/shared' {
-  interface RouterConfig {
-    routerOptions: NonNullable<
-      Parameters<ReturnType<typeof useRouter>['push']>[1]
-    >;
-  }
-}
-
-// Create a context for ImageKit authentication
 export const ImageKitAuthContext = createContext<{
   authenticate: () => Promise<{
     signature: string;
@@ -35,7 +21,6 @@ export const ImageKitAuthContext = createContext<{
 
 export const useImageKitAuth = () => useContext(ImageKitAuthContext);
 
-// ImageKit authentication function
 const authenticator = async () => {
   try {
     const response = await fetch('/api/imagekit-auth');
@@ -47,21 +32,17 @@ const authenticator = async () => {
   }
 };
 
-export function Providers({ children, themeProps }: ProvidersProps) {
-  const router = useRouter();
-
+export function Providers({ children }: ProvidersProps) {
   return (
-    <HeroUIProvider navigate={router.push}>
-      <ImageKitProvider
-        authenticator={authenticator}
-        publicKey={process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || ''}
-        urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || ''}
-      >
-        <ImageKitAuthContext.Provider value={{ authenticate: authenticator }}>
-          <ToastProvider placement="top-right" />
-          <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
-        </ImageKitAuthContext.Provider>
-      </ImageKitProvider>
-    </HeroUIProvider>
+    <ImageKitProvider
+      authenticator={authenticator}
+      publicKey={process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || ''}
+      urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || ''}
+    >
+      <ImageKitAuthContext.Provider value={{ authenticate: authenticator }}>
+        <Toaster position="top-right" richColors />
+        {children}
+      </ImageKitAuthContext.Provider>
+    </ImageKitProvider>
   );
 }
