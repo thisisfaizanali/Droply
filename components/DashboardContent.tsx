@@ -1,134 +1,219 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Tabs, Tab } from "@heroui/tabs";
-import { FileUp, FileText, User } from "lucide-react";
-import FileUploadForm from "@/components/FileUploadForm";
+import { useSearchParams } from "next/navigation";
+import axios from "axios";
+import { toast } from "sonner";
+import { Menu } from "lucide-react";
+import type { File as FileType } from "@/lib/db/schema";
+import DashboardSidebar from "@/components/DashboardSidebar";
 import FileList from "@/components/FileList";
 import UserProfile from "@/components/UserProfile";
-import { useSearchParams } from "next/navigation";
 
 interface DashboardContentProps {
   userId: string;
   userName: string;
 }
 
-export default function DashboardContent({
-  userId,
-  userName,
-}: DashboardContentProps) {
+type FileTab = "all" | "starred" | "trash";
+
+export default function DashboardContent({ userId, userName }: DashboardContentProps) {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
 
-  const [activeTab, setActiveTab] = useState<string>("files");
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [activeView, setActiveView] = useState<"files" | "profile">(
+    tabParam === "profile" ? "profile" : "files"
+  );
+  const [activeTab, setActiveTab] = useState<FileTab>("all");
   const [currentFolder, setCurrentFolder] = useState<string | null>(null);
+  const [files, setFiles] = useState<FileType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  // Set the active tab based on URL parameter
   useEffect(() => {
-    if (tabParam === "profile") {
-      setActiveTab("profile");
-    } else {
-      setActiveTab("files");
-    }
+    setActiveView(tabParam === "profile" ? "profile" : "files");
   }, [tabParam]);
 
-  const handleFileUploadSuccess = useCallback(() => {
-    setRefreshTrigger((prev) => prev + 1);
-  }, []);
+  const fetchFiles = useCallback(async () => {
+    setLoading(true);
+    try {
+      let url = `/api/files?userId=${userId}`;
+      if (currentFolder) url += `&parentId=${currentFolder}`;
+      const response = await axios.get(url);
+      setFiles(response.data);
+    } catch (error) {
+      console.error("Error fetching files:", error);
+      toast.error("We couldn't load your files. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  }, [userId, currentFolder]);
 
-  const handleFolderChange = useCallback((folderId: string | null) => {
-    setCurrentFolder(folderId);
-  }, []);
+  useEffect(() => {
+    fetchFiles();
+  }, [fetchFiles]);
+
+  const filteredFiles = files.filter((file) => {
+    if (activeTab === "starred") return file.isStarred && !file.isTrash;
+    if (activeTab === "trash") return file.isTrash;
+    return !file.isTrash;
+  });
+
+  const allCount = files.filter((f) => !f.isTrash).length;
+  const starredCount = files.filter((f) => f.isStarred && !f.isTrash).length;
+  const trashCount = files.filter((f) => f.isTrash).length;
+  const storageUsedBytes = files
+    .filter((f) => !f.isTrash && !f.isFolder)
+    .reduce((sum, f) => sum + f.size, 0);
+
+  const handleStar = async (fileId: string) => {
+    try {
+      await axios.patch(`/api/files/${fileId}/star`);
+      const file = files.find((f) => f.id === fileId);
+      setFiles(files.map((f) => (f.id === fileId ? { ...f, isStarred: !f.isStarred } : f)));
+      toast.success(
+        file?.isStarred
+          ? `"${file?.name}" removed from your starred files`
+          : `"${file?.name}" added to your starred files`
+      );
+    } catch (error) {
+      console.error("Error starring file:", error);
+      toast.error("We couldn't update the star status. Please try again.");
+    }
+  };
+
+  const handleTrash = async (fileId: string) => {
+    try {
+      const response = await axios.patch(`/api/files/${fileId}/trash`);
+      const file = files.find((f) => f.id === fileId);
+      setFiles(files.map((f) => (f.id === fileId ? { ...f, isTrash: !f.isTrash } : f)));
+      toast.success(
+        `"${file?.name}" has been ${response.data.isTrash ? "moved to trash" : "restored"}`
+      );
+    } catch (error) {
+      console.error("Error trashing file:", error);
+      toast.error("We couldn't update the file status. Please try again.");
+    }
+  };
+
+  const handleDelete = async (fileId: string) => {
+    try {
+      const fileToDelete = files.find((f) => f.id === fileId);
+      const response = await axios.delete(`/api/files/${fileId}/delete`);
+      if (response.data.success) {
+        setFiles(files.filter((f) => f.id !== fileId));
+        toast.success(`"${fileToDelete?.name || "File"}" has been permanently removed`);
+      } else {
+        throw new Error(response.data.error || "Failed to delete file");
+      }
+    } catch (error) {
+      console.error("Error deleting file:", error);
+      toast.error("We couldn't delete the file. Please try again later.");
+    }
+  };
+
+  const handleEmptyTrash = async () => {
+    try {
+      await axios.delete(`/api/files/empty-trash`);
+      setFiles(files.filter((f) => !f.isTrash));
+      toast.success(`All ${trashCount} items have been permanently deleted`);
+    } catch (error) {
+      console.error("Error emptying trash:", error);
+      toast.error("We couldn't empty the trash. Please try again later.");
+    }
+  };
+
+  const handleDownload = async (file: FileType) => {
+    try {
+      const downloadUrl = file.type.startsWith("image/")
+        ? `${process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT}/tr:q-100,orig-true/${file.path}`
+        : file.fileUrl;
+
+      const response = await fetch(downloadUrl);
+      if (!response.ok) throw new Error(`Failed to download file: ${response.statusText}`);
+
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = file.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+
+      toast.success(`"${file.name}" is ready to download.`);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+      toast.error("We couldn't download the file. Please try again later.");
+    }
+  };
+
+  const selectTab = (tab: FileTab) => {
+    setActiveView("files");
+    setActiveTab(tab);
+    setCurrentFolder(null);
+    setMobileSidebarOpen(false);
+  };
+
+  const selectProfile = () => {
+    setActiveView("profile");
+    setMobileSidebarOpen(false);
+  };
 
   return (
-    <>
-      <div className="mb-8">
-        <h2 className="text-4xl font-bold text-default-900">
-          Hi,{" "}
-          <span className="text-primary">
-            {userName?.length > 10
-              ? `${userName?.substring(0, 10)}...`
-              : userName?.split(" ")[0] || "there"}
-          </span>
-          !
-        </h2>
-        <p className="text-default-600 mt-2 text-lg">
-          Your images are waiting for you.
-        </p>
+    <div className="relative flex flex-1">
+      <button
+        className="mb-3 flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-sm md:hidden"
+        onClick={() => setMobileSidebarOpen(true)}
+      >
+        <Menu className="h-4 w-4" />
+        Menu
+      </button>
+
+      {mobileSidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-organic-text/20 md:hidden"
+          onClick={() => setMobileSidebarOpen(false)}
+        />
+      )}
+
+      <div
+        className={`fixed inset-y-0 left-0 z-40 bg-background transition-transform md:static md:z-auto md:translate-x-0 ${
+          mobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <DashboardSidebar
+          activeView={activeView}
+          activeTab={activeTab}
+          allCount={allCount}
+          starredCount={starredCount}
+          trashCount={trashCount}
+          storageUsedBytes={storageUsedBytes}
+          onSelectTab={selectTab}
+          onSelectProfile={selectProfile}
+        />
       </div>
 
-      <Tabs
-        aria-label="Dashboard Tabs"
-        color="primary"
-        variant="underlined"
-        selectedKey={activeTab}
-        onSelectionChange={(key) => setActiveTab(key as string)}
-        classNames={{
-          tabList: "gap-6",
-          tab: "py-3",
-          cursor: "bg-primary",
-        }}
-      >
-        <Tab
-          key="files"
-          title={
-            <div className="flex items-center gap-3">
-              <FileText className="h-5 w-5" />
-              <span className="font-medium">My Files</span>
-            </div>
-          }
-        >
-          <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-1">
-              <Card className="border border-default-200 bg-default-50 shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader className="flex gap-3">
-                  <FileUp className="h-5 w-5 text-primary" />
-                  <h2 className="text-xl font-semibold">Upload</h2>
-                </CardHeader>
-                <CardBody>
-                  <FileUploadForm
-                    userId={userId}
-                    onUploadSuccess={handleFileUploadSuccess}
-                    currentFolder={currentFolder}
-                  />
-                </CardBody>
-              </Card>
-            </div>
-
-            <div className="lg:col-span-2">
-              <Card className="border border-default-200 bg-default-50 shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader className="flex gap-3">
-                  <FileText className="h-5 w-5 text-primary" />
-                  <h2 className="text-xl font-semibold">Your Files</h2>
-                </CardHeader>
-                <CardBody>
-                  <FileList
-                    userId={userId}
-                    refreshTrigger={refreshTrigger}
-                    onFolderChange={handleFolderChange}
-                  />
-                </CardBody>
-              </Card>
-            </div>
-          </div>
-        </Tab>
-
-        <Tab
-          key="profile"
-          title={
-            <div className="flex items-center gap-3">
-              <User className="h-5 w-5" />
-              <span className="font-medium">Profile</span>
-            </div>
-          }
-        >
-          <div className="mt-8">
-            <UserProfile />
-          </div>
-        </Tab>
-      </Tabs>
-    </>
+      <main className="flex-1 px-4 py-2 md:px-8 md:py-4">
+        {activeView === "files" ? (
+          <FileList
+            files={filteredFiles}
+            loading={loading}
+            activeTab={activeTab}
+            userId={userId}
+            onStar={handleStar}
+            onTrash={handleTrash}
+            onDelete={handleDelete}
+            onDownload={handleDownload}
+            onRefresh={fetchFiles}
+            onEmptyTrash={handleEmptyTrash}
+            onFolderChange={setCurrentFolder}
+          />
+        ) : (
+          <UserProfile />
+        )}
+      </main>
+    </div>
   );
 }
