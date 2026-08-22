@@ -45,9 +45,22 @@ next-env.d.ts
 
 # My learnings in a nutshell :
 learning.md
+steps.md
+drizzle.md 
+notes.txt
 
 # My notes:
 notes.txt
 
 # clerk configuration (can include secrets)
 /.clerk/
+
+#agents
+AGENTS.md
+CLAUDE.md   
+
+#claude
+.claude/
+
+#documentation for user and agents both :
+docs/*
