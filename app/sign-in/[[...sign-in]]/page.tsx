@@ -1,26 +1,15 @@
 import SignInForm from "@/components/SignInForm";
-import { CloudUpload } from "lucide-react";
-import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import AuthSplitPanel from "@/components/AuthSplitPanel";
 
 export default function SignInPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      {/* Use the unified Navbar component */}
+    <div className="flex min-h-screen flex-col">
       <Navbar />
-
-      <main className="flex-1 flex justify-center items-center p-6">
+      <main className="mx-auto grid w-full max-w-[1180px] flex-1 items-center gap-12 px-6 py-8 lg:grid-cols-2">
+        <AuthSplitPanel />
         <SignInForm />
       </main>
-
-      {/* Dark mode footer */}
-      <footer className="bg-gray-900 text-white py-4">
-        <div className="container mx-auto px-6 text-center">
-          <p className="text-sm text-gray-400">
-            &copy; {new Date().getFullYear()} Droply. All rights reserved.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }
