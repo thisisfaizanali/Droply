@@ -165,7 +165,7 @@ export default function FileList({
         />
       )}
 
-      {activeTab === "all" && !currentFolder && (
+      {activeTab === "all" && (
         <FileUploadBanner userId={userId} onUploadSuccess={onRefresh} currentFolder={currentFolder} />
       )}
 

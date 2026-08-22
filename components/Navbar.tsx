@@ -107,7 +107,7 @@ export default function Navbar({ user }: NavbarProps) {
 
   return (
     <header
-      className={`sticky top-0 z-50 bg-background/95 backdrop-blur transition-shadow ${
+      className={`sticky top-0 z-50 bg-background backdrop-blur transition-shadow ${
         isScrolled ? "shadow-organic-sm" : ""
       }`}
     >
@@ -194,7 +194,7 @@ export default function Navbar({ user }: NavbarProps) {
 
         {isMobileMenuOpen && (
           <div
-            className="fixed inset-0 z-40 bg-organic-text/20 md:hidden"
+            className="fixed inset-0 z-40 bg-organic-neutral-900 opacity-20 md:hidden"
             onClick={() => setIsMobileMenuOpen(false)}
             aria-hidden="true"
           />

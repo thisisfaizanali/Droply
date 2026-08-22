@@ -25,34 +25,34 @@ export const Badge = ({
 }: BadgeProps & React.HTMLAttributes<HTMLSpanElement>) => {
   const colorStyles = {
     default: {
-      solid: "bg-default-500 text-white",
-      flat: "bg-default-100 text-default-800",
-      outline: "border border-default-300 text-default-800",
+      solid: "bg-muted text-foreground",
+      flat: "bg-muted text-foreground",
+      outline: "border border-border text-foreground",
     },
     primary: {
-      solid: "bg-primary text-white",
-      flat: "bg-primary-100 text-primary-800",
-      outline: "border border-primary-300 text-primary-800",
+      solid: "bg-primary text-primary-foreground",
+      flat: "bg-organic-accent-100 text-organic-accent-800",
+      outline: "border border-organic-accent-300 text-organic-accent-800",
     },
     secondary: {
-      solid: "bg-secondary text-white",
-      flat: "bg-secondary-100 text-secondary-800",
-      outline: "border border-secondary-300 text-secondary-800",
+      solid: "bg-secondary text-secondary-foreground",
+      flat: "bg-muted text-foreground",
+      outline: "border border-border text-foreground",
     },
     success: {
-      solid: "bg-success text-white",
-      flat: "bg-success-100 text-success-800",
-      outline: "border border-success-300 text-success-800",
+      solid: "bg-organic-accent2-600 text-white",
+      flat: "bg-organic-accent2-100 text-organic-accent2-800",
+      outline: "border border-organic-accent2-300 text-organic-accent2-800",
     },
     warning: {
-      solid: "bg-warning text-white",
-      flat: "bg-warning-100 text-warning-800",
-      outline: "border border-warning-300 text-warning-800",
+      solid: "bg-organic-accent-600 text-white",
+      flat: "bg-organic-accent-100 text-organic-accent-800",
+      outline: "border border-organic-accent-300 text-organic-accent-800",
     },
     danger: {
-      solid: "bg-danger text-white",
-      flat: "bg-danger-100 text-danger-800",
-      outline: "border border-danger-300 text-danger-800",
+      solid: "bg-destructive text-destructive-foreground",
+      flat: "bg-organic-accent-200 text-organic-accent-900",
+      outline: "border border-organic-accent-400 text-organic-accent-900",
     },
   };
 

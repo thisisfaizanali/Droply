@@ -54,8 +54,8 @@ export default function Home() {
 
             <div className="relative order-first aspect-square overflow-hidden rounded-[28px] bg-organic-accent2-100 lg:order-last">
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="absolute inset-0 bg-organic-accent/10 blur-3xl" />
-                <ImageIcon className="relative h-24 w-24 text-organic-accent/70 md:h-32 md:w-32" />
+                <div className="absolute inset-0 bg-organic-accent-100 blur-3xl" />
+                <ImageIcon className="relative h-24 w-24 text-organic-accent-600 md:h-32 md:w-32" />
               </div>
             </div>
           </div>

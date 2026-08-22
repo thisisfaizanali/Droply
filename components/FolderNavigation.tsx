@@ -20,6 +20,7 @@ export default function FolderNavigation({
         variant="outline"
         size="icon"
         className="h-9 w-9"
+        aria-label="Go up one folder"
         onClick={navigateUp}
         disabled={folderPath.length === 0}
       >

@@ -173,7 +173,7 @@ export default function DashboardContent({ userId, userName }: DashboardContentP
 
       {mobileSidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-organic-text/20 md:hidden"
+          className="fixed inset-0 z-40 bg-organic-neutral-900 opacity-20 md:hidden"
           onClick={() => setMobileSidebarOpen(false)}
         />
       )}

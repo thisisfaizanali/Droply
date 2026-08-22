@@ -18,7 +18,6 @@ interface ConfirmationModalProps {
   iconColor?: string;
   confirmText?: string;
   cancelText?: string;
-  confirmColor?: "primary" | "danger" | "warning" | "success" | "default";
   onConfirm: () => void;
   isDangerous?: boolean;
   warningMessage?: string;
@@ -65,6 +64,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             {cancelText}
           </Button>
           <Button
+            variant={isDangerous ? "destructive" : "default"}
             onClick={() => {
               onConfirm();
               onOpenChange(false);
