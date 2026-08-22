@@ -1,7 +1,7 @@
-import { Button } from "@heroui/button";
+import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
-import { Card, CardBody } from "@heroui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   CloudUpload,
   Shield,
@@ -13,163 +13,124 @@ import Navbar from "@/components/Navbar";
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-default-50">
-      {/* Use the unified Navbar component */}
+    <div className="flex min-h-screen flex-col">
       <Navbar />
 
-      {/* Main content */}
       <main className="flex-1">
-        {/* Hero section */}
-        <section className="py-12 md:py-20 px-4 md:px-6">
-          <div className="container mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
-              <div className="space-y-6 text-center lg:text-left">
-                <div>
-                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-default-900 leading-tight">
-                    Store your <span className="text-primary">images</span> with
-                    ease
-                  </h1>
-                  <p className="text-lg md:text-xl text-default-600">
-                    Simple. Secure. Fast.
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap gap-4 pt-4 justify-center lg:justify-start">
-                  <SignedOut>
-                    <Link href="/sign-up">
-                      <Button size="lg" variant="solid" color="primary">
-                        Get Started
-                      </Button>
-                    </Link>
-                    <Link href="/sign-in">
-                      <Button size="lg" variant="flat" color="primary">
-                        Sign In
-                      </Button>
-                    </Link>
-                  </SignedOut>
-                  <SignedIn>
-                    <Link href="/dashboard">
-                      <Button
-                        size="lg"
-                        variant="solid"
-                        color="primary"
-                        endContent={<ArrowRight className="h-4 w-4" />}
-                      >
-                        Go to Dashboard
-                      </Button>
-                    </Link>
-                  </SignedIn>
-                </div>
+        <section className="relative mx-auto max-w-[1180px] px-6 pb-10 pt-16 md:pb-16 md:pt-20">
+          <div className="pointer-events-none absolute -top-6 left-[6%] h-28 w-28 rounded-full bg-organic-accent2-200 opacity-55" />
+          <div className="pointer-events-none absolute -bottom-6 left-[34%] h-16 w-16 rounded-full bg-organic-accent-200 opacity-60" />
+          <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">
+            <div>
+              <span className="inline-flex rounded-full bg-organic-accent-100 px-3 py-1 text-xs tracking-wide text-organic-accent-800">
+                Personal cloud storage
+              </span>
+              <h1 className="mt-4 max-w-lg text-4xl md:text-5xl">
+                Your images, kept somewhere nicer.
+              </h1>
+              <p className="mt-4 max-w-md text-lg text-muted-foreground">
+                Droply is a quiet place to drop your photos and files —
+                organized, private, and yours alone. No clutter, no noise.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <SignedOut>
+                  <Link href="/sign-up">
+                    <Button size="lg">Get started free</Button>
+                  </Link>
+                  <Link href="/sign-in">
+                    <Button size="lg" variant="outline">Sign in</Button>
+                  </Link>
+                </SignedOut>
+                <SignedIn>
+                  <Link href="/dashboard">
+                    <Button size="lg">
+                      Go to Dashboard
+                      <ArrowRight className="ml-1 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </SignedIn>
               </div>
+            </div>
 
-              <div className="flex justify-center order-first lg:order-last">
-                <div className="relative w-64 h-64 md:w-80 md:h-80">
-                  <div className="absolute inset-0 bg-primary/10 rounded-full blur-3xl"></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <ImageIcon className="h-24 md:h-32 w-24 md:w-32 text-primary/70" />
-                  </div>
-                </div>
+            <div className="relative order-first aspect-square overflow-hidden rounded-[28px] bg-organic-accent2-100 lg:order-last">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="absolute inset-0 bg-organic-accent/10 blur-3xl" />
+                <ImageIcon className="relative h-24 w-24 text-organic-accent/70 md:h-32 md:w-32" />
               </div>
             </div>
           </div>
         </section>
 
-        {/* Features section */}
-        <section className="py-12 md:py-16 px-4 md:px-6 bg-default-50">
-          <div className="container mx-auto">
-            <div className="text-center mb-8 md:mb-12">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4 text-default-900">
-                What You Get
-              </h2>
-            </div>
+        <section className="mx-auto max-w-[1180px] px-6 py-14">
+          <h2 className="max-w-md">Everything your files need, nothing they don't</h2>
+          <div className="mt-9 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
+            <Card className="border-none shadow-organic-sm">
+              <CardContent className="p-7">
+                <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-organic-accent-100">
+                  <CloudUpload className="h-[22px] w-[22px] text-organic-accent-700" />
+                </div>
+                <h3 className="mt-2 text-lg">Quick uploads</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Drag, drop, done. Your files land where you left off.
+                </p>
+              </CardContent>
+            </Card>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
-              <Card className="border border-default-200 bg-default-50 shadow-sm hover:shadow-md transition-shadow">
-                <CardBody className="p-6 text-center">
-                  <CloudUpload className="h-10 md:h-12 w-10 md:w-12 mx-auto mb-4 text-primary" />
-                  <h3 className="text-lg md:text-xl font-semibold mb-2 text-default-900">
-                    Quick Uploads
-                  </h3>
-                  <p className="text-default-600">Drag, drop, done.</p>
-                </CardBody>
-              </Card>
+            <Card className="border-none shadow-organic-sm">
+              <CardContent className="p-7">
+                <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-organic-accent2-100">
+                  <Folder className="h-[22px] w-[22px] text-organic-accent2-700" />
+                </div>
+                <h3 className="mt-2 text-lg">Smart organization</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Folders, stars and search keep things easy to find.
+                </p>
+              </CardContent>
+            </Card>
 
-              <Card className="border border-default-200 bg-default-50 shadow-sm hover:shadow-md transition-shadow">
-                <CardBody className="p-6 text-center">
-                  <Folder className="h-10 md:h-12 w-10 md:w-12 mx-auto mb-4 text-primary" />
-                  <h3 className="text-lg md:text-xl font-semibold mb-2 text-default-900">
-                    Smart Organization
-                  </h3>
-                  <p className="text-default-600">
-                    Keep it tidy, find it fast.
-                  </p>
-                </CardBody>
-              </Card>
-
-              <Card className="border border-default-200 bg-default-50 shadow-sm hover:shadow-md transition-shadow sm:col-span-2 md:col-span-1 mx-auto sm:mx-0 max-w-md sm:max-w-full">
-                <CardBody className="p-6 text-center">
-                  <Shield className="h-10 md:h-12 w-10 md:w-12 mx-auto mb-4 text-primary" />
-                  <h3 className="text-lg md:text-xl font-semibold mb-2 text-default-900">
-                    Locked Down
-                  </h3>
-                  <p className="text-default-600">
-                    Your images, your eyes only.
-                  </p>
-                </CardBody>
-              </Card>
-            </div>
+            <Card className="border-none shadow-organic-sm sm:col-span-2 md:col-span-1">
+              <CardContent className="p-7">
+                <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-organic-accent-100">
+                  <Shield className="h-[22px] w-[22px] text-organic-accent-700" />
+                </div>
+                <h3 className="mt-2 text-lg">Locked down</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Private by default. Your images, your eyes only.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </section>
 
-        {/* CTA section */}
-        <section className="py-12 md:py-20 px-4 md:px-6 bg-default-50">
-          <div className="container mx-auto text-center">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-default-900">
-              Ready?
-            </h2>
+        <section className="px-6 py-14">
+          <div className="relative mx-auto flex max-w-[1180px] flex-col items-center justify-between gap-6 overflow-hidden rounded-[28px] bg-organic-accent2-100 px-8 py-12 sm:flex-row">
+            <div className="pointer-events-none absolute -left-10 -top-16 h-36 w-36 rounded-full bg-organic-accent2-300 opacity-50" />
+            <div className="pointer-events-none absolute bottom-[-70px] left-40 h-24 w-24 rounded-full bg-organic-accent-300 opacity-40" />
+            <h2 className="relative max-w-md text-center sm:text-left">Ready when you are.</h2>
             <SignedOut>
-              <div className="flex flex-wrap justify-center gap-4 mt-8">
-                <Link href="/sign-up">
-                  <Button
-                    size="lg"
-                    variant="solid"
-                    color="primary"
-                    endContent={<ArrowRight className="h-4 w-4" />}
-                  >
-                    Let's Go
-                  </Button>
-                </Link>
-              </div>
+              <Link href="/sign-up" className="relative">
+                <Button size="lg">Let's go</Button>
+              </Link>
             </SignedOut>
             <SignedIn>
-              <Link href="/dashboard">
-                <Button
-                  size="lg"
-                  variant="solid"
-                  color="primary"
-                  endContent={<ArrowRight className="h-4 w-4" />}
-                >
-                  Dashboard
-                </Button>
+              <Link href="/dashboard" className="relative">
+                <Button size="lg">Dashboard</Button>
               </Link>
             </SignedIn>
           </div>
         </section>
       </main>
 
-      {/* Simple footer */}
-      <footer className="bg-default-50 border-t border-default-200 py-4 md:py-6">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <CloudUpload className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-bold">Droply</h2>
-            </div>
-            <p className="text-default-500 text-sm">
-              &copy; {new Date().getFullYear()} Droply
-            </p>
+      <footer className="mx-auto flex max-w-[1180px] justify-between border-t border-border px-6 py-8">
+        <div className="flex items-center gap-2">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary font-heading text-xs text-primary-foreground">
+            D
           </div>
+          <span className="font-heading">Droply</span>
         </div>
+        <span className="text-sm text-muted-foreground">
+          &copy; {new Date().getFullYear()} Droply
+        </span>
       </footer>
     </div>
   );
