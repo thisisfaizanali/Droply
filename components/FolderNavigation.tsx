@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowUpFromLine } from "lucide-react";
-import { Button } from "@heroui/button";
+import { Button } from "@/components/ui/button";
 
 interface FolderNavigationProps {
   folderPath: Array<{ id: string; name: string }>;
@@ -15,32 +15,34 @@ export default function FolderNavigation({
   navigateToPathFolder,
 }: FolderNavigationProps) {
   return (
-    <div className="flex flex-wrap items-center gap-2 text-sm overflow-x-auto pb-2">
+    <div className="mb-4 flex flex-wrap items-center gap-2 overflow-x-auto pb-1 text-sm">
       <Button
-        variant="flat"
-        size="sm"
-        isIconOnly
+        variant="outline"
+        size="icon"
+        className="h-9 w-9"
         onClick={navigateUp}
-        isDisabled={folderPath.length === 0}
+        disabled={folderPath.length === 0}
       >
         <ArrowUpFromLine className="h-4 w-4" />
       </Button>
       <Button
-        variant="flat"
+        variant="outline"
         size="sm"
         onClick={() => navigateToPathFolder(-1)}
-        className={folderPath.length === 0 ? "font-bold" : ""}
+        className={folderPath.length === 0 ? "font-semibold" : ""}
       >
         Home
       </Button>
       {folderPath.map((folder, index) => (
         <div key={folder.id} className="flex items-center">
-          <span className="mx-1 text-default-400">/</span>
+          <span className="mx-1 text-muted-foreground">/</span>
           <Button
-            variant="flat"
+            variant="outline"
             size="sm"
             onClick={() => navigateToPathFolder(index)}
-            className={`${index === folderPath.length - 1 ? "font-bold" : ""} text-ellipsis overflow-hidden max-w-[150px]`}
+            className={`max-w-[150px] overflow-hidden text-ellipsis ${
+              index === folderPath.length - 1 ? "font-semibold" : ""
+            }`}
             title={folder.name}
           >
             {folder.name}

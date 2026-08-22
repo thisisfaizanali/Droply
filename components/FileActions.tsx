@@ -1,7 +1,7 @@
 "use client";
 
 import { Star, Trash, X, ArrowUpFromLine, Download } from "lucide-react";
-import { Button } from "@heroui/button";
+import { Button } from "@/components/ui/button";
 import type { File as FileType } from "@/lib/db/schema";
 
 interface FileActionsProps {
@@ -10,6 +10,7 @@ interface FileActionsProps {
   onTrash: (id: string) => void;
   onDelete: (file: FileType) => void;
   onDownload: (file: FileType) => void;
+  compact?: boolean;
 }
 
 export default function FileActions({
@@ -18,76 +19,37 @@ export default function FileActions({
   onTrash,
   onDelete,
   onDownload,
+  compact = false,
 }: FileActionsProps) {
+  const size = compact ? "icon" : "sm";
+
   return (
-    <div className="flex flex-wrap gap-2 justify-end">
-      {/* Download button */}
+    <div className="flex flex-wrap justify-end gap-1.5">
       {!file.isTrash && !file.isFolder && (
-        <Button
-          variant="flat"
-          size="sm"
-          onClick={() => onDownload(file)}
-          className="min-w-0 px-2"
-          startContent={<Download className="h-4 w-4" />}
-        >
-          <span className="hidden sm:inline">Download</span>
+        <Button variant="outline" size={size} onClick={() => onDownload(file)}>
+          <Download className="h-3.5 w-3.5" />
+          {!compact && <span className="ml-1">Download</span>}
         </Button>
       )}
 
-      {/* Star button */}
       {!file.isTrash && (
-        <Button
-          variant="flat"
-          size="sm"
-          onClick={() => onStar(file.id)}
-          className="min-w-0 px-2"
-          startContent={
-            <Star
-              className={`h-4 w-4 ${
-                file.isStarred
-                  ? "text-yellow-400 fill-current"
-                  : "text-gray-400"
-              }`}
-            />
-          }
-        >
-          <span className="hidden sm:inline">
-            {file.isStarred ? "Unstar" : "Star"}
-          </span>
+        <Button variant="outline" size={size} onClick={() => onStar(file.id)}>
+          <Star
+            className={`h-3.5 w-3.5 ${file.isStarred ? "fill-organic-accent text-organic-accent" : ""}`}
+          />
+          {!compact && <span className="ml-1">{file.isStarred ? "Unstar" : "Star"}</span>}
         </Button>
       )}
 
-      {/* Trash/Restore button */}
-      <Button
-        variant="flat"
-        size="sm"
-        onClick={() => onTrash(file.id)}
-        className="min-w-0 px-2"
-        color={file.isTrash ? "success" : "default"}
-        startContent={
-          file.isTrash ? (
-            <ArrowUpFromLine className="h-4 w-4" />
-          ) : (
-            <Trash className="h-4 w-4" />
-          )
-        }
-      >
-        <span className="hidden sm:inline">
-          {file.isTrash ? "Restore" : "Delete"}
-        </span>
+      <Button variant="outline" size={size} onClick={() => onTrash(file.id)}>
+        {file.isTrash ? <ArrowUpFromLine className="h-3.5 w-3.5" /> : <Trash className="h-3.5 w-3.5" />}
+        {!compact && <span className="ml-1">{file.isTrash ? "Restore" : "Delete"}</span>}
       </Button>
 
-      {/* Delete permanently button */}
       {file.isTrash && (
-        <Button
-          variant="flat"
-          size="sm"
-          color="danger"
-          onClick={() => onDelete(file)}
-          className="min-w-0 px-2"
-          startContent={<X className="h-4 w-4" />}
-        >
-          <span className="hidden sm:inline">Remove</span>
+        <Button variant="outline" size={size} onClick={() => onDelete(file)}>
+          <X className="h-3.5 w-3.5" />
+          {!compact && <span className="ml-1">Remove</span>}
         </Button>
       )}
     </div>
