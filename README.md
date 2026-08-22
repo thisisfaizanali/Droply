@@ -1,17 +1,19 @@
 # Droply
 
-A simple file storage application built with Next.js, Clerk, Neon, Drizzle, and HeroUI.
+A simple file storage application built with Next.js, Clerk, Neon, Drizzle, and Tailwind CSS + shadcn/ui.
+
+![Droply landing page](.github/images/landing-page.png)
 
 ## Features
 
-- User authentication with Clerk
-- File uploads with ImageKit
-- File management (star, trash)
-- Responsive UI with HeroUI
+- User authentication with Clerk, including two-factor (email code) sign-in
+- Image and PDF uploads with ImageKit, via drag-and-drop or click-to-browse
+- Folder organization and file management (star, trash, restore, permanently delete)
+- Responsive, sidebar-nav dashboard UI built with Tailwind CSS and shadcn/ui
 
 ## Tech Stack
 
-- **Frontend**: Next.js, HeroUI
+- **Frontend**: Next.js, Tailwind CSS, shadcn/ui
 - **Authentication**: Clerk
 - **Database**: Neon (PostgreSQL)
 - **ORM**: Drizzle
